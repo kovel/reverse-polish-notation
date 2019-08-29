@@ -4,19 +4,32 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 public class AppMain {
     private static final List<Character> OPERATORS_HIGH_PRIORITY = Collections.singletonList('^');
     private static final List<Character> OPERATORS_MIDDLE_PRIORITY = Arrays.asList('*', '/');
     private static final List<Character> OPERATORS_LOW_PRIORITY = Arrays.asList('+', '-');
+    private static final List<Character> OPERATORS_LOWEST_PRIORITY = Arrays.asList('(', ')');
     private static final List<Character> OPERATORS = new ArrayList<>();
+    private static final Map<Character, Integer> OPERATOR_PRIORITIES = new HashMap<>();
 
     static {
         OPERATORS.addAll(OPERATORS_HIGH_PRIORITY);
         OPERATORS.addAll(OPERATORS_MIDDLE_PRIORITY);
         OPERATORS.addAll(OPERATORS_LOW_PRIORITY);
+        OPERATORS.addAll(OPERATORS_LOWEST_PRIORITY);
+
+        OPERATOR_PRIORITIES.put('^', 4);
+        OPERATOR_PRIORITIES.put('*', 3);
+        OPERATOR_PRIORITIES.put('/', 3);
+        OPERATOR_PRIORITIES.put('+', 2);
+        OPERATOR_PRIORITIES.put('-', 2);
+        OPERATOR_PRIORITIES.put('(', 1);
+        OPERATOR_PRIORITIES.put(')', 1);
     }
 
     public static void main(String[] args) {
@@ -39,7 +52,8 @@ public class AppMain {
 
         evaluate(generateRPN("1 + 2 * 3"));
         evaluate(generateRPN("2 + 2 * 2"));
-        evaluate(generateRPN("2 + 2 * 2 - 2"));
+        evaluate(generateRPN("2 + 2 * 2 - 2 ^ 2"));
+        evaluate(generateRPN("3 + 4 * 2 / ( 1 - 5 ) ^ 2"));
     }
 
     private static String generateRPN(String s) {
@@ -52,14 +66,23 @@ public class AppMain {
             if (Character.isDigit(c) || c == '.') {
                 token.append(c);
             } else if (c == ' ') {
-                if (token.length() > 0) {
+                if (token.length() > 0)
+                {
                     output.append(token);
                     output.append(' ');
                     token = new StringBuilder();
                 }
+            } else if (c == '(') {
+                operators.push(c);
+            } else if (c == ')') {
+                char topToken = operators.pop();
+                while (topToken != '(') {
+                    output.append(topToken);
+                    output.append(' ');
+                    topToken = operators.pop();
+                }
             } else if (OPERATORS.contains(c)) {
-                if (!operators.isEmpty()
-                        && OPERATORS_MIDDLE_PRIORITY.contains(operators.peek())) {
+                while (!operators.isEmpty() && OPERATOR_PRIORITIES.get(operators.peek()) > OPERATOR_PRIORITIES.get(c)) {
                     output.append(operators.pop());
                     output.append(' ');
                 }
