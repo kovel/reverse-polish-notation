@@ -10,19 +10,10 @@ import java.util.Map;
 import java.util.Stack;
 
 public class AppMain {
-    private static final List<Character> OPERATORS_HIGH_PRIORITY = Collections.singletonList('^');
-    private static final List<Character> OPERATORS_MIDDLE_PRIORITY = Arrays.asList('*', '/');
-    private static final List<Character> OPERATORS_LOW_PRIORITY = Arrays.asList('+', '-');
-    private static final List<Character> OPERATORS_LOWEST_PRIORITY = Arrays.asList('(', ')');
-    private static final List<Character> OPERATORS = new ArrayList<>();
+    private static final List<Character> OPERATORS = Arrays.asList('*', '/', '+', '-', '(', ')', '^');
     private static final Map<Character, Integer> OPERATOR_PRIORITIES = new HashMap<>();
 
     static {
-        OPERATORS.addAll(OPERATORS_HIGH_PRIORITY);
-        OPERATORS.addAll(OPERATORS_MIDDLE_PRIORITY);
-        OPERATORS.addAll(OPERATORS_LOW_PRIORITY);
-        OPERATORS.addAll(OPERATORS_LOWEST_PRIORITY);
-
         OPERATOR_PRIORITIES.put('^', 4);
         OPERATOR_PRIORITIES.put('*', 3);
         OPERATOR_PRIORITIES.put('/', 3);
